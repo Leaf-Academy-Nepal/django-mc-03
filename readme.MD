@@ -1,45 +1,56 @@
-1. unzip the file and view the html file
-2. make templates folder
-3. make static folder
-4. go to settings.py
 ```
-import os
-DIRS': [os.path.join(BASE_DIR, 'templates')],
+python manage.py migrate
 ```
-5. create views.py in portfolio
-6. 
-```
-from django.views.generic import TemplateView
+yo suru mai garne kina ki aru le garkeko code hamro database ma halnu parxa - user table
 
-# here we are following the convention provided by Django
-# IndexPageView vanne class call garyo vane index.html pathauxa
+
+1. python manage.py startapp garera app/section create garne - cv
+```
+python manage.py startapp cv
+```
+2. setting.py ma jane INSTALLED_APPS ma "cv" vanne app thapne - jun app banayo tei thapne
+3. models.py ma hamro table ko properties lekhne
+4. pip install pillow
+5. Skill vanne table banaune - cv ko models.py vanne file ma
+```
+class Skill(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+
+```
+6. admin.py ma Skill vanne add garne - esle garda hamro admin panel ma Skill vane add, delete, update garna milxa
+7. createsupruser garne
+```
+python manage.py createsuperuser
+```
+8. access garne admin panel 
+```
+127.0.0.0:8000/admin
+```
+paxadi ko /admin halne
+login garne
+
+9. tya skill add garne
+10. portfolio view.py ma gayera skill_list ko data pathaune
+```
+from cv.models import Skill
 
 class IndexPageView(TemplateView):
     template_name = "index.html"
-```
 
-7. go to urls.py
-8. 
-```
-from .views import IndexPageView
-
-path('', IndexPageView.as_view(), name="homepage")
-path('k hanne', 'kun function/class kholne', 'tesko name k vanne - django le chinne gari')
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["skill_list"] = Skill.objects.all()
+        return context
 
 ```
-9. 127.0.0.0:8000 jada without css ko page load huna parxa
-10. aaba css load garna lai settings.py ma jane
-```
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
-```
-yo vaneko static file haru hami kata store garxau vanera vaneko ho
-11. index.html ma jane ra {% load static %} suru ma halne - yo vaneko hamro static file chai yeha pauxa hai vaneko ho
-12. change every static href and src into dynamic one
-```
-{% static 'file/ko/path.extension' %}
 
-{% static 'css/style.css' %}
-```
+esma hamle get_context_data vanne function overwrite gareko hou
+tyo data ma hamle skill_list vanne euta key add garyou - ra tesma select * from skill vanne query ko data patahyou
+11. index.html file ma gayera for loop lagauxau ra teko data access garaxau
 
+```
+{% for skill in skill_list  %}
+{{skill.name}}
+{% endfor %}
+```
