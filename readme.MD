@@ -40,3 +40,45 @@ def get_context_data(self, **kwargs):
         data["blog_list"] = Blog.objects.all()
         return data
 ```
+8. django lai media file kata rakhne taha huna parxa - settings.py ma vanne
+```
+MEDIA_URL = 'media/' 
+- url ma k halne
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+- folder ko name k rakhne
+```
+9. aaba waiter lai ni taha huna parxa yo media/ vanne magda kata bata lyaune vanera
+```
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+
+yo vaneko mathi ko media url ho ra kun folder ma store vako xa vaneko ho
+```
+
+10. index.html
+```
+{% for blog in blog_list %}
+
+{{blog.title}} estaii esti garera property get garne
+{% endfor %}
+
+```
+
+11. blog image check garna parxa xa ki xaina vanera
+```
+{% if blog.image %}
+<img src="{{blog.image.url}}">
+{% else %}
+
+{% endif %}
+```
+12. condition check in django templates
+```
+{% if experience.is_currently_working_here %} 
+    Current 
+{%else%}
+    {{experience.end_date}}
+{% endif %}
+```
