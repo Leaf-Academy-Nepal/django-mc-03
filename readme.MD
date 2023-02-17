@@ -1,56 +1,42 @@
+1. naya app banaune - blog
 ```
+python manage.py startapp blog
+```
+2. add blog in INSTALLED_APPS of settings.py
+3. pip install pillow
+4. create new table called Blogs
+```
+from django.db import models
+
+
+class Blog(models.Model):
+    name = models.CharField(max_length=255)
+    image = models.ImageField(upload_to="blog/images/")
+    content = models.TextField()
+    is_published = models.BooleanField(default=False)
+    author = models.CharField(max_length=255, null=True, blank=True)
+    published_date = models.DateField()
+
+```
+5. makemigraitons
+```
+python manage.py makemigrations
 python manage.py migrate
 ```
-yo suru mai garne kina ki aru le garkeko code hamro database ma halnu parxa - user table
+6.  add to admin.py of blogs
+```
+from .models import Blog
 
+admin.site.register(Blog)
+```
+7. in portfolio views.py
+```
+from blog.models import Blog
 
-1. python manage.py startapp garera app/section create garne - cv
-```
-python manage.py startapp cv
-```
-2. setting.py ma jane INSTALLED_APPS ma "cv" vanne app thapne - jun app banayo tei thapne
-3. models.py ma hamro table ko properties lekhne
-4. pip install pillow
-5. Skill vanne table banaune - cv ko models.py vanne file ma
-```
-class Skill(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-
-```
-6. admin.py ma Skill vanne add garne - esle garda hamro admin panel ma Skill vane add, delete, update garna milxa
-7. createsupruser garne
-```
-python manage.py createsuperuser
-```
-8. access garne admin panel 
-```
-127.0.0.0:8000/admin
-```
-paxadi ko /admin halne
-login garne
-
-9. tya skill add garne
-10. portfolio view.py ma gayera skill_list ko data pathaune
-```
-from cv.models import Skill
-
-class IndexPageView(TemplateView):
-    template_name = "index.html"
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["skill_list"] = Skill.objects.all()
-        return context
-
-```
-
-esma hamle get_context_data vanne function overwrite gareko hou
-tyo data ma hamle skill_list vanne euta key add garyou - ra tesma select * from skill vanne query ko data patahyou
-11. index.html file ma gayera for loop lagauxau ra teko data access garaxau
-
-```
-{% for skill in skill_list  %}
-{{skill.name}}
-{% endfor %}
+def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        #select * from skill
+        data["skill_list"] = Skill.objects.all()
+        data["blog_list"] = Blog.objects.all()
+        return data
 ```
