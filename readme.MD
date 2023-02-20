@@ -1,131 +1,42 @@
-1. contact vanne application create garyou
+HTML same rakhne
+1. base.html banaune
+2. common common syntax haru / html ko - tya lagera rakhen - header footer
+3. {% block content %} {% endblock %} yo halne - jaha chai hami aarko page halxau
+4. remove unnecessary data
+5. link garne
 ```
-python manage.py startapp contact
+{% url 'index' %} -> django le aafnu urls or waiters haru lai index vanne page liyera aau vanxa
 ```
-2. Contact vanne table/model create garoyou
+6. {% extends 'base.html' %} garne yo vaneko base.html ko sabai content liyera aau vaneko ho
+7. {% block content %} {% endblock %}  esma content lekhne - aafnu html css haru
+
+Blog Detail
+1. BlogDetail vanne class banaune - DetailView import garne
 ```
-from django.db import models
-
-class Contact(models.Model):
-    name = models.CharField(max_length=255)
-    email = models.EmailField()
-    subject = models.CharField(max_length=255)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-```
-- create_at chai create hune bela aafai create hunxa - auto_now_add=True garda aafai date database rakhnxa
-
-3. admin ma add garyou
-```
-from django.contrib import admin
-from .models import Contact
-
-admin.site.register(Contact)
-```
-4. forms.py vanne file create garxau
-```
-from django import forms
-from .models import Contact
-
-class ContactForm(forms.ModelForm):
-    class Meta:
-        model = Contact
-        fields = [
-            "name",
-            "email",
-            "subject",
-            "message",
-        ]
-    
-```
-- yo vaneko hamro form bata k k data line - esma hamle name, meial subject ra message li ra xau
-
-5. views.py of portfolio ma gayera - get_context_data vitra yo rakhxau - contact Form
-```
-        context["contact_form"] = ContactForm()
-
-```
-6. index.html ma gyera contact ko lagi form halxau
-```
-        {{contact_form}}
-
-        {{contact_form.as_p}}
-        -- yo vaneko paragraph ma dekhaune ho <p> yo tag vitra haldinxa harek input lai 
-
-```
-7. form vanne ni banauna praxa ra button ni halna parxa
-```
-<form method="POST" action="{% url 'contact' %}">
-        {% csrf_token %}
-        {{contact_us_form.as_p}}
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-```
-
-csrf token birana vayena - csrf le hamro system security ko help garxa ra sachikai genuine user le chalako ho vanera taha hunxa
-
-method = POST hunxa kina ki hami data input gardai xau
-
-action = yo vaneko data input bata backend ma kata pathaune ho
-
-
-8. contact ma views.py banaune
-```
-from django.shortcuts import render
-from django.views.generic import CreateView
-from .models import Contact
-from .forms import ContactForm
-
-class ContactCreateView(CreateView):
-    form_class = ContactForm
-    model = Contact
-    success_url = "/"
-
-```
-CreateView vanne code inherit garne - esle hami databae ma code save gardai xau hai vanxa
-9. hamro urls.py yeha xa vanera django lai vanna parxa
-```
-from django.urls import path, include
-
-    path('', include("contact.urls")),
-
-    #aaba django lai taha hunxa ki contact ko urls.py ma pani code xa vanera - waiter ko kam garxa
-
-```
-
-
-##Flow2:
-Blog list garne ra templates repeate garna naparos wala code
-1. blog ma view.py open garera code lekhne
-ListView ko
-```
-from django.shortcuts import render
-from django.views.generic import ListView
-from .models import Blog
-
-
-class BlogListView(ListView):
-    queryset = Blog.objects.all()
-    #select * from blog
-
-    template_name = "blog_list.html"
-    #templates vanne folder ko kun file kholne
-
+class BlogDetail(DetailView):
     model = Blog
-    #kun table ko data
+    queryset = Blog.objects.all()
+    template_name = "blog_detail.html"
 
+```
+2. blog_detail.html vanne page liyera aaune ani conent copy ganre
+3. blog_detail ma {{object}} vanne key use garera aafnu content dynamic baanaune
+4. urls.py
+```
+harek blog ko lagi unique url huna parxa
+tesko lagi hami ki id use garxau ki slug use garxau
+yo instance ma hami id use gardai xau
 
-    #object_list - default name - key
+path("blog/<int:pk>/", BlogDetail.as_view(), name="blog_detail")
+
+<int:pk> -> esle k baujnax vanda - yo pk vaneko primary key unique huna le eslai hami use garxau ra yo integer type ko ho
 ```
 
-2. urls.py ma pani code lekhne
-```
-from django.urls import path
-from .views import BlogListView
+DB ma - get blog where id = pk
 
-urlpatterns = [
-    path("blog/", BlogListView.as_view(), name="blog_list")
-]
+5. page link?
 ```
-3. blog_list.html vanne file banaune ra template bata code import garne
+{% url 'blog_detail' blog.pk %}
+
+{% url 'django lai hamle dine name' primarykey ki ta slug %}
+```

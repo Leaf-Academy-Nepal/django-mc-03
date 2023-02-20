@@ -9,6 +9,7 @@ class ContactCreateView(CreateView):
     model = Contact
     queryset = Contact.objects.all()
     success_url = "/"
+    template_name = "contact.html"
 
 
 
